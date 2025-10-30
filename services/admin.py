@@ -1,11 +1,41 @@
 from django.contrib import admin
-from .models import Book,Course,CourseLesson,ContactMessage,StrategyCall,SpeakerInvitation
+from .models import Book,Course,CourseLesson,ContactMessage,StrategyCall,SpeakerInvitation,Payment
 
 # Register your models here.
 
 admin.site.register(Book)
 admin.site.register(ContactMessage)
 admin.site.register(StrategyCall)
+
+@admin.register(Payment)
+class PaymentAdmin(admin.ModelAdmin):
+    list_display = (
+        "full_name",
+        "email",
+        "payment_type",
+        "item_name",
+        "amount",
+        "status",
+        "created_at",
+    )
+    list_filter = ("payment_type", "status", "created_at")
+    search_fields = ("full_name", "email", "item_name", "payment_id")
+    readonly_fields = ("created_at", "payment_id")
+    ordering = ("-created_at",)
+    fieldsets = (
+        ("Customer Info", {
+            "fields": ("full_name", "email", "phone")
+        }),
+        ("Payment Details", {
+            "fields": ("payment_type", "item_id", "item_name", "amount", "status")
+        }),
+        ("Stripe Info", {
+            "fields": ("payment_id",)
+        }),
+        ("Timestamps", {
+            "fields": ("created_at",),
+        }),
+    )
 
 @admin.register(SpeakerInvitation)
 class SpeakerInvitationAdmin(admin.ModelAdmin):

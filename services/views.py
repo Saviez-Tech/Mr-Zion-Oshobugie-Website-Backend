@@ -122,6 +122,7 @@ def create_payment(request):
         full_name = data.get('full_name')
         email = data.get('email')
         phone = data.get('phone', None)
+        qty= data.get('qty')
 
         if not payment_type:
             return Response({'error': 'Payment type is required.'}, status=status.HTTP_400_BAD_REQUEST)
@@ -135,7 +136,7 @@ def create_payment(request):
             try:
                 item = Book.objects.get(id=item_id)
                 item_name = item.title
-                amount = item.price
+                amount = item.price * qty
             except Book.DoesNotExist:
                 return Response({'error': 'Book not found.'}, status=status.HTTP_404_NOT_FOUND)
 
@@ -144,14 +145,14 @@ def create_payment(request):
             try:
                 item = Course.objects.get(id=item_id)
                 item_name = item.title
-                amount = item.price
+                amount = item.price * qty
             except Course.DoesNotExist:
                 return Response({'error': 'Course not found.'}, status=status.HTTP_404_NOT_FOUND)
 
         # --- SERVICE (STATIC) ---
         elif payment_type == 'service':
             item_name = data.get('item_name')
-            amount = data.get('amount')
+            amount = data.get('amount') * 2
 
             if not item_name or not amount:
                 return Response(
@@ -171,6 +172,7 @@ def create_payment(request):
             item_id=item_id,
             item_name=item_name,
             amount=amount,
+            qty=qty,
         )
 
         success_url = f"{settings.SITE_URL}/payment-success"
@@ -181,7 +183,6 @@ def create_payment(request):
             email=email,
             success_url=success_url,
             cancel_url=cancel_url,
-            product_name=item_name,
         )
 
         payment.payment_id = session.id

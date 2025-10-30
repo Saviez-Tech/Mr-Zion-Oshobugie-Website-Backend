@@ -142,6 +142,7 @@ class Payment(models.Model):
     payment_type = models.CharField(max_length=20, choices=PAYMENT_TYPE_CHOICES)
     item_id = models.PositiveIntegerField(blank=True, null=True)  # only used for book/course
     item_name = models.CharField(max_length=200)  # name of the service/book/course
+    qty=models.IntegerField(default=1)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     payment_id = models.CharField(max_length=255, blank=True, null=True)
     status = models.CharField(max_length=20, default="pending")
