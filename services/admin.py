@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Book,Course,CourseLesson,ContactMessage,StrategyCall,SpeakerInvitation,Payment
+from .models import Book,Course,CourseLesson,ContactMessage,StrategyCall,SpeakerInvitation,Payment,ServicePayment,BookPayment,CoursePayment
 
 # Register your models here.
 
@@ -7,8 +7,7 @@ admin.site.register(Book)
 admin.site.register(ContactMessage)
 admin.site.register(StrategyCall)
 
-@admin.register(Payment)
-class PaymentAdmin(admin.ModelAdmin):
+class PaymentBaseAdmin(admin.ModelAdmin):
     list_display = (
         "full_name",
         "email",
@@ -16,6 +15,7 @@ class PaymentAdmin(admin.ModelAdmin):
         "item_name",
         "amount",
         "status",
+        "satisfied",
         "created_at",
     )
     list_filter = ("payment_type", "status", "created_at")
@@ -23,19 +23,38 @@ class PaymentAdmin(admin.ModelAdmin):
     readonly_fields = ("created_at", "payment_id")
     ordering = ("-created_at",)
     fieldsets = (
-        ("Customer Info", {
-            "fields": ("full_name", "email", "phone")
-        }),
-        ("Payment Details", {
-            "fields": ("payment_type", "item_id", "item_name", "amount", "status")
-        }),
-        ("Stripe Info", {
-            "fields": ("payment_id",)
-        }),
-        ("Timestamps", {
-            "fields": ("created_at",),
-        }),
+        ("Customer Info", {"fields": ("full_name", "email", "phone")}),
+        ("Payment Details", {"fields": ("payment_type", "item_id", "item_name", "amount", "status", "satisfied")}),
+        ("Stripe Info", {"fields": ("payment_id",)}),
+        ("Timestamps", {"fields": ("created_at",)}),
     )
+
+
+@admin.register(Payment)
+class PaymentAdmin(PaymentBaseAdmin):
+    """Shows all payments"""
+    pass
+
+
+@admin.register(ServicePayment)
+class ServicePaymentAdmin(PaymentBaseAdmin):
+    """Shows only service payments"""
+    def get_queryset(self, request):
+        return super().get_queryset(request).filter(payment_type="service")
+
+
+@admin.register(BookPayment)
+class BookPaymentAdmin(PaymentBaseAdmin):
+    """Shows only book payments"""
+    def get_queryset(self, request):
+        return super().get_queryset(request).filter(payment_type="book")
+
+
+@admin.register(CoursePayment)
+class CoursePaymentAdmin(PaymentBaseAdmin):
+    """Shows only course payments"""
+    def get_queryset(self, request):
+        return super().get_queryset(request).filter(payment_type="course")
 
 @admin.register(SpeakerInvitation)
 class SpeakerInvitationAdmin(admin.ModelAdmin):

@@ -146,8 +146,28 @@ class Payment(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     payment_id = models.CharField(max_length=255, blank=True, null=True)
     status = models.CharField(max_length=20, default="pending")
+    satisfied=models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.full_name} - {self.payment_type} - {self.amount}"
 
+class ServicePayment(Payment):
+    class Meta:
+        proxy = True
+        verbose_name = "Service Payment"
+        verbose_name_plural = "Service Payments"
+
+
+class BookPayment(Payment):
+    class Meta:
+        proxy = True
+        verbose_name = "Book Payment"
+        verbose_name_plural = "Book Payments"
+
+
+class CoursePayment(Payment):
+    class Meta:
+        proxy = True
+        verbose_name = "Course Payment"
+        verbose_name_plural = "Course Payments"
