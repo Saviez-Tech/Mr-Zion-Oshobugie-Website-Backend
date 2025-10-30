@@ -28,8 +28,8 @@ class Course(models.Model):
     instructor_name = models.CharField(max_length=100, default="Zion Oshiobugie")
     instructor_photo = models.URLField(blank=True, null=True)
     thumbnail = models.URLField()
-    what_you_learn = models.TextField()
-    who_is_for = models.TextField(blank=True, null=True)
+    what_you_learn = models.JSONField()
+    who_is_for = models.JSONField(blank=True, null=True)
     access_code = models.CharField(max_length=20, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
