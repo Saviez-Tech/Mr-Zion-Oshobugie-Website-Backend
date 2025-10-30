@@ -42,10 +42,15 @@ def send_payment_success_email(sender, instance, created, **kwargs):
             message = f"Hi {instance.full_name},\n\nThank you for enrolling in the course: {instance.item_name}.\nYour payment of ₦{instance.amount} was successful.\n\nYou’ll get access instructions soon.\n\n– Team"
 
         if subject and message:
-            send_mail(
-                subject,
-                message,
-                getattr(settings, "DEFAULT_FROM_EMAIL", "no-reply@example.com"),
-                [instance.email],
-                fail_silently=True,
-            )
+            try:
+                send_mail(
+                    subject,
+                    message,
+                    getattr(settings, "DEFAULT_FROM_EMAIL", "no-reply@example.com"),
+                    [instance.email],
+                    fail_silently=False, 
+                )
+                print(f"✅ Email sent successfully to {instance.email}")
+            except Exception as e:
+                print(f"❌ Failed to send email to {instance.email}: {e}")
+

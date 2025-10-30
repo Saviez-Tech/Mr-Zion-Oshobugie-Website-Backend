@@ -13,6 +13,7 @@ class Book(models.Model):
     free_chapter_pdf = models.URLField(blank=True, null=True)
     price = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
     bundle_eligible = models.BooleanField(default=True)
+    ideal_for = models.TextField(null=True,blank=True)
     what_readers_will_learn = models.JSONField(blank=True, null=True) 
     created_at = models.DateTimeField(auto_now_add=True)
 
