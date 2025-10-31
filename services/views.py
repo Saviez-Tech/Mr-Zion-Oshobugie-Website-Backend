@@ -85,27 +85,34 @@ def invite_speaker(request):
 
 @api_view(['POST'])
 def access_course(request):
-    """
-    Endpoint to access a course by its access code.
-    """
     access_code = request.data.get('access_code')
+    course_id = request.data.get('course_id')
 
-    if not access_code:
+    if not access_code or not course_id:
         return Response(
-            {"error": "Access code is required."},
+            {"error": "Both course_id and access_code are required."},
             status=status.HTTP_400_BAD_REQUEST
         )
 
+    # Check if the course ID exists
     try:
-        course = Course.objects.get(access_code=access_code)
+        course = Course.objects.get(id=course_id)
     except Course.DoesNotExist:
         return Response(
-            {"error": "Invalid access code."},
+            {"error": "Invalid course ID."},
             status=status.HTTP_404_NOT_FOUND
+        )
+
+    # Check if the access code matches that course
+    if course.access_code != access_code:
+        return Response(
+            {"error": "Incorrect access code for this course."},
+            status=status.HTTP_403_FORBIDDEN
         )
 
     serializer = CourseDetailSerializer(course)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 
 

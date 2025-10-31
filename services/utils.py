@@ -1,5 +1,8 @@
 import stripe
 from django.conf import settings
+import random
+import string
+
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -26,3 +29,7 @@ def create_stripe_checkout_session(amount, email, success_url, cancel_url):
         cancel_url=cancel_url,
     )
     return session
+
+
+def generate_course_id():
+        return "COURSE-" + ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))

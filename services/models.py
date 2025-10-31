@@ -1,4 +1,5 @@
 from django.db import models
+from .utils import generate_course_id
 
 # Create your models here.
 
@@ -22,6 +23,13 @@ class Book(models.Model):
 
 
 class Course(models.Model):
+    id = models.CharField(
+        primary_key=True,
+        max_length=20,
+        editable=False,
+        unique=True,
+        default='',
+    )
     title = models.CharField(max_length=200)
     description = models.TextField()
     duration = models.CharField(max_length=100)  # e.g. "6 weeks | 12 modules"
@@ -33,6 +41,17 @@ class Course(models.Model):
     who_is_for = models.JSONField(blank=True, null=True)
     access_code = models.CharField(max_length=20, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            new_id = generate_course_id()
+            while Course.objects.filter(id=new_id).exists():
+                new_id = generate_course_id()
+            self.id = new_id
+        super().save(*args, **kwargs)
+
 
     def __str__(self):
         return self.title
