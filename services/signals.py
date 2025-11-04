@@ -30,7 +30,7 @@ def send_payment_success_email(sender, instance, created, **kwargs):
                 # ✅ Fetch course details
                 course = Course.objects.filter(id=instance.item_id).first()
                 if course:
-                    course_link = f"https://yourfrontenddomain.com/courses/{course.id}"
+                    course_link = f"https://zionoshiobugie.com/courses/owned/{course.id}"
                     access_code = course.access_code
 
                     # 👇 Use your helper function to send email
